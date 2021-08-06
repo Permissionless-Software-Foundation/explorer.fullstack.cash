@@ -14,6 +14,8 @@
 This is a Gatsby web app that allows users explore the current state of the
 [pay-to-write database](https://github.com/Permissionless-Software-Foundation/ipfs-bch-wallet-service) (P2WDB). This site was forked from [bch-wallet-starter](https://github.com/Permissionless-Software-Foundation/bch-wallet-starter).
 
+It provides a visual tool for interrogating the database.
+
 ## License
 
 [MIT](LICENSE.md)
