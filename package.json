@@ -1,6 +1,6 @@
 {
-  "name": "bch-wallet-starter",
-  "description": "A BCH web wallet starter for Gatsby.",
+  "name": "explorer.fullstack.cash",
+  "description": "A 'block explorer' for the P2WDB",
   "version": "1.0.0",
   "license": "MIT",
   "author": "Chris Troutner <chris.troutner@gmail.com>",
@@ -25,10 +25,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Permissionless-Software-Foundation/bch-wallet-starter"
+    "url": "https://github.com/Permissionless-Software-Foundation/explorer.fullstack.cash"
   },
   "bugs": {
-    "url": "https://github.com/Permissionless-Software-Foundation/bch-wallet-starter/issues"
+    "url": "https://github.com/Permissionless-Software-Foundation/explorer.fullstack.cash/issues"
   },
   "devDependencies": {
     "semantic-release": "^17.4.3",
