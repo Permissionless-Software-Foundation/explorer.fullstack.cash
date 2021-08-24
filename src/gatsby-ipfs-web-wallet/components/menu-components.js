@@ -24,11 +24,18 @@ import Wallet from 'gatsby-ipfs-web-wallet/src/components/admin-lte/wallet'
 import Tokens from 'gatsby-ipfs-web-wallet/src/components/admin-lte/tokens'
 import Configure from 'gatsby-ipfs-web-wallet/src/components/admin-lte/configure'
 import SendReceive from 'gatsby-ipfs-web-wallet/src/components/admin-lte/send-receive'
+import Explorer from '../../explorer'
 
 const { Item } = Sidebar
 
 const MenuComponents = props => {
   return [
+    {
+      activedItem: true,
+      key: 'Explorer',
+      component: <Explorer key='Explorer' {...props} />,
+      menuItem: <Item icon='fas-binoculars' key='Explorer' text='Explorer' />
+    },
     {
       key: 'Tokens',
       component: <Tokens key='Tokens' {...props} />,
@@ -58,9 +65,7 @@ const MenuComponents = props => {
     {
       key: 'TX History',
       component: <TXHistory key='TX History' {...props} />,
-      menuItem: (
-        <Item icon='fas-cog' key='TX History' text='TX History' />
-      )
+      menuItem: <Item icon='fas-cog' key='TX History' text='TX History' />
     },
     {
       key: 'Demo Component',
