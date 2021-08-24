@@ -1,5 +1,7 @@
 import React from 'react'
 import { Row, Col, Content, Box, DataTable } from 'adminlte-2-react'
+import Details from './details'
+import './explorer.css'
 const axios = require('axios').default
 
 const SERVER = 'https://p2wdb.fullstack.cash/'
@@ -11,36 +13,38 @@ class Explorer extends React.Component {
     super(props)
     _this = this
     this.state = {
+      showEntry: false,
       data: [],
-      firstColumns: [
-        { title: 'Created At', data: 'createdAt' },
-        {
-          title: 'Transaction ID',
-          data: 'txid',
-          render: txid => <span id={txid.subString}>{txid.subString}</span>
-        },
-        {
-          title: 'Hash',
-          data: 'hash',
-          render: hash => (
-            <span
-              onclick={() => {
-                console.log('test')
-              }}
-              id={hash.subString}
-            >
-              {hash.subString}
-            </span>
-          )
-        },
-        { title: 'App Id', data: 'appId' }
-      ],
-      entries: []
+      entries: [],
+      entryData: null
     }
+
+    this.firstColumns = [
+      { title: 'Created At', data: 'createdAt' },
+      {
+        title: 'Transaction',
+        data: 'txid',
+        render: txid => (
+          <span className='on-click-event action-handler'>
+            {txid.subString}
+          </span>
+        )
+      },
+      {
+        title: 'Hash',
+        data: 'hash',
+        render: hash => (
+          <span className='on-click-event action-handler'>
+            {hash.subString}
+          </span>
+        )
+      },
+      { title: 'App Id', data: 'appId' }
+    ]
   }
 
   render () {
-    const { data, firstColumns } = _this.state
+    const { data, entryData } = _this.state
     return (
       <Content
         title='P2WDB Explorer'
@@ -48,20 +52,29 @@ class Explorer extends React.Component {
         browserTitle='P2WDB Explorer'
       >
         <Row>
+          {entryData && (
+            <Col xs={12}>
+              <Details entry={entryData} onClose={_this.handleClose} />
+            </Col>
+          )}
           <Col xs={12}>
             <Box title='Block explorer for P2WDB'>
               <DataTable
-                columns={firstColumns}
+                columns={_this.firstColumns}
                 data={data}
                 options={{
                   paging: true,
                   lengthChange: false,
                   searching: false,
-                  ordering: true,
+                  ordering: false,
                   info: true,
-                  autoWidth: true
+                  autoWidth: false
                 }}
-                onPageChange={_this.handleEvents}
+                onClickEvents={{
+                  onClickEvent: (data, rowIdx, rowData) => {
+                    _this.handleEvents(data)
+                  }
+                }}
               />
             </Box>
           </Col>
@@ -71,14 +84,18 @@ class Explorer extends React.Component {
   }
 
   async componentDidMount () {
-    const entries = await _this.getEntries()
-    _this.generateDataTable(entries)
+    _this.handleEntries()
+
+    // Get data and update table
+    // every 20 seconds
+    setInterval(() => {
+      _this.handleEntries()
+    }, 20000)
   }
 
-  async componentDidUpdate () {
-    // Adds new 'click' events when the view is updated
-    const { entries } = _this.state
-    _this.handleEvents(entries)
+  async handleEntries () {
+    const entries = await _this.getEntries()
+    _this.generateDataTable(entries)
   }
 
   // REST petition to Get data fron the pw2db
@@ -90,7 +107,6 @@ class Explorer extends React.Component {
         data: {}
       }
       const result = await axios.request(options)
-      console.log('result', result.data)
       _this.setState({
         entries: result.data.data
       })
@@ -100,22 +116,29 @@ class Explorer extends React.Component {
     }
   }
 
+  // Generate table content
   generateDataTable (dataArr) {
     try {
       const data = []
+
       for (let i = 0; i < dataArr.length; i++) {
         const entry = dataArr[i]
         const row = {
-          createdAt: entry.createdAt,
+          // createdAt row data
+          createdAt: new Date(entry.createdAt).toLocaleString(),
+          // Transaction id row data
           txid: {
-            subString: _this.simplifyString(entry.key),
-            value: entry.key
+            subString: _this.cutString(entry.key),
+            txid: entry.key
           },
+          // Hash row data
           hash: {
-            subString: _this.simplifyString(entry.hash),
-            value: entry.hash
+            subString: _this.cutString(entry.hash),
+            hash: entry.hash,
+            data: entry
           },
-          appId: entry.appId
+          // App id row data
+          appId: entry.appId || 'none'
         }
         data.push(row)
       }
@@ -127,45 +150,57 @@ class Explorer extends React.Component {
     }
   }
 
-  simplifyString (txid) {
+  cutString (txid) {
     try {
       const subTxid = txid.slice(0, 4)
       const subTxid2 = txid.slice(-4)
       return `${subTxid}...${subTxid2}`
     } catch (err) {
-      console.warn('Error in cutTxid() ', err)
+      console.warn('Error in cutString() ', err)
     }
   }
 
-  handleTxId (txid) {
+  handleTxIdClick (txid) {
     try {
       window.open(`${EXPLORER_URL}${txid}`, '_blank')
     } catch (err) {
-      console.warn('Error in handleTxId() ', err)
+      console.warn('Error in handleTxIdClick() ', err)
     }
   }
 
-  // Gets each element of the transaction id column
-  // to add them the onClick event, its done this way
-  // because that event is not recognized if it gets
-  // added directly to the html tag
-  handleEvents () {
+  handleHashClick (data) {
     try {
-      const { entries } = _this.state
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        const txid = _this.simplifyString(entry.key)
-        const element = document.getElementById(txid)
-        if (element) {
-          // Adding on click event
-          element.addEventListener('click', () => {
-            _this.handleTxId(entry.key)
-          })
-        }
+      data.isValid = data.isValid.toString()
+      _this.setState({
+        entryData: data
+      })
+    } catch (err) {
+      _this.setState({
+        entryData: null
+      })
+      console.warn('Error in handleHashClick() ', err)
+    }
+  }
+
+  handleEvents (eventData) {
+    try {
+      const { txid, hash, data } = eventData
+
+      if (txid) {
+        _this.handleTxIdClick(txid)
+      }
+      if (hash && data) {
+        _this.handleHashClick(data)
       }
     } catch (err) {
       console.warn('Error in handleEvents() ', err)
     }
+  }
+
+  handleClose () {
+    _this.setState({
+      entryData: null
+    })
   }
 }
 

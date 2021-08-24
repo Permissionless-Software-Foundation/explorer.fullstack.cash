@@ -31,7 +31,6 @@ const { Item } = Sidebar
 const MenuComponents = props => {
   return [
     {
-      activedItem: true,
       key: 'Explorer',
       component: <Explorer key='Explorer' {...props} />,
       menuItem: <Item icon='fas-binoculars' key='Explorer' text='Explorer' />
