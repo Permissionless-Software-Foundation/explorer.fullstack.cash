@@ -69,7 +69,7 @@ class Details extends React.Component {
                             - <b>Signature : </b> {entryData.signature}
                           </p>
                           <p>
-                            - <b>Data : </b> {entryData.data}
+                            - <b>Data : </b> {_this.formatData(entryData.data)}
                           </p>
                         </>
                       )}
@@ -118,6 +118,18 @@ class Details extends React.Component {
 
   handleClose () {
     _this.props.onClose()
+  }
+
+  formatData (data) {
+    try {
+      const parsed = JSON.parse(data)
+      const str = JSON.stringify(parsed, null, 2)
+
+      return str
+    } catch (error) {
+      console.warn('error in formatData', error)
+      return data
+    }
   }
 }
 Details.propTypes = {
