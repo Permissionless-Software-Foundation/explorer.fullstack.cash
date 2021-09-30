@@ -31,6 +31,7 @@ const { Item } = Sidebar
 const MenuComponents = props => {
   return [
     {
+      active: true, // Set this view as default
       key: 'Explorer',
       component: <Explorer key='Explorer' {...props} />,
       menuItem: <Item icon='fas-binoculars' key='Explorer' text='Explorer' />
