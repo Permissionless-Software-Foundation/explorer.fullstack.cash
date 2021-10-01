@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Row, Col, Box, Button } from 'adminlte-2-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+import JSONPretty from 'react-json-pretty'
 let _this
 class Details extends React.Component {
   constructor (props) {
@@ -69,7 +69,21 @@ class Details extends React.Component {
                             - <b>Signature : </b> {entryData.signature}
                           </p>
                           <p>
-                            - <b>Data : </b> {entryData.data}
+                            {!_this.isJson(entryData.data) && (
+                              <>
+                                - <b>Data : </b> {entryData.data}
+                              </>
+                            )}
+
+                            {_this.isJson(entryData.data) && (
+                              <>
+                                - <b>Data :</b>
+                                <JSONPretty
+                                  id='json-pretty'
+                                  data={entryData.data}
+                                />
+                              </>
+                            )}
                           </p>
                         </>
                       )}
@@ -118,6 +132,16 @@ class Details extends React.Component {
 
   handleClose () {
     _this.props.onClose()
+  }
+
+  // Detects if the input is a string and converts to json object
+  isJson (data) {
+    try {
+      JSON.parse(data)
+      return true
+    } catch (error) {
+      return false
+    }
   }
 }
 Details.propTypes = {
