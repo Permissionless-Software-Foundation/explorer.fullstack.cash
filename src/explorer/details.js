@@ -3,6 +3,10 @@ import PropTypes from 'prop-types'
 import { Row, Col, Box, Button } from 'adminlte-2-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import JSONPretty from 'react-json-pretty'
+
+const HASH_EXPLORER = 'https://p2wdb.fullstack.cash/entry/hash/' // PSF p2wdb hash explorer
+const TX_EXPLORER = 'https://simpleledger.info/tx/' // BCH Transaction Explorer
+
 let _this
 class Details extends React.Component {
   constructor (props) {
@@ -53,11 +57,23 @@ class Details extends React.Component {
                       </p>
                       <p>
                         <b>HASH: </b>
-                        {entry.hash}
+                        <a
+                          href={`${HASH_EXPLORER}${entry.hash}`}
+                          target='_blank'
+                          rel='noreferrer'
+                        >
+                          {entry.hash}
+                        </a>
                       </p>
                       <p>
                         <b>TRANSACTION ID : </b>
-                        {entry.key}
+                        <a
+                          href={`${TX_EXPLORER}${entry.key}`}
+                          target='_blank'
+                          rel='noreferrer'
+                        >
+                          {entry.key}
+                        </a>
                       </p>
                       {entryData && (
                         <>
