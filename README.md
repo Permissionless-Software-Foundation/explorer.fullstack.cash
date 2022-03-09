@@ -1,3 +1,7 @@
+This repository has been deprecated and moved [to the FullStack GitHub group](https://github.com/FullStack-cash/explorer.fullstack.cash).
+
+------
+
 <!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
 <p align="center">
   <a href="https://www.gatsbyjs.org" target="_blank">
